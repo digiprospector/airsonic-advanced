@@ -9,6 +9,10 @@ Airsonic-Advanced
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/airsonic-advanced/airsonic-advanced.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/airsonic-advanced/airsonic-advanced/context:javascript)
 [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/airsonic-advanced/airsonic-advanced.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/airsonic-advanced/airsonic-advanced/context:java)
 
+Added feature on this version
+-----------------------------
+1. playlist resume
+
 What is Airsonic-Advanced?
 --------------------------
 Airsonic-Advanced is a more modern implementation of the Airsonic fork with several key performance and feature enhancements. It adds and supersedes several features in Airsonic.

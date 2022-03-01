@@ -108,6 +108,8 @@
         musicTable: null,
         audioPlayer: null,
 
+        playlistId: -1,
+
         init() {
             var ratingOnImage = "<spring:theme code='ratingOnImage'/>";
             var ratingOffImage = "<spring:theme code='ratingOffImage'/>";
@@ -644,6 +646,8 @@
                 var song = this.songs[this.currentSongIndex];
                 var positionMillis = Math.round(this.audioPlayer.currentTime * 1000);
                 top.StompClient.send("/app/bookmarks/set", JSON.stringify({positionMillis: positionMillis, comment: "Played on Web Player " + this.player.id, mediaFileId: song.id}));
+                top.StompClient.send("/app/playlists/setResume", JSON.stringify({resume_mills: positionMillis, resume_index: this.currentSongIndex, id: this.playlistId, username: "${model.user.username}"}));
+
             }
         },
         lastProgressionBookmarkTime: 0,
@@ -1022,6 +1026,7 @@
 
         playQueueCallback(playQueue, initial) {
             this.songs = playQueue.entries;
+            this.playlistId = playQueue.playlistId;
             this.shuffleRadioEnabled = playQueue.shuffleRadioEnabled;
             this.internetRadioEnabled = playQueue.internetRadioEnabled;
 

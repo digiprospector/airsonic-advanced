@@ -133,6 +133,14 @@ public class PlaylistService {
         return playlistDao.getAllPlaylists();
     }
 
+    public void setResume(int id, String username, int resume_index, long resume_mills) {
+        playlistDao.setPlaylistResume(id, username, resume_index, resume_mills);
+    }
+
+    public Pair<Integer, Long> getPlaylistResume(int playlist_id, String username) {
+        return playlistDao.getPlaylistResume(playlist_id, username);
+    }
+
     public List<Playlist> getReadablePlaylistsForUser(String username) {
         return playlistDao.getReadablePlaylistsForUser(username);
     }

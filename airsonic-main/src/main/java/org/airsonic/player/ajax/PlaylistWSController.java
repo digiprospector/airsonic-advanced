@@ -136,6 +136,11 @@ public class PlaylistWSController {
         playlistService.updatePlaylist(playlist);
     }
 
+    @MessageMapping("/setResume")
+    public void setResumePlaylist(PlaylistsetResumeRequest req) {
+        this.playlistService.setResume(req.getId(), req.getUsername(), req.getresume_index(), req.getresume_mills());
+    }
+
     @MessageMapping("/files/append")
     @SendToUser(broadcast = false)
     public int appendToPlaylist(PlaylistFilesModificationRequest req) {
@@ -294,6 +299,45 @@ public class PlaylistWSController {
 
         public void setShared(boolean shared) {
             this.shared = shared;
+        }
+    }
+
+    public static class PlaylistsetResumeRequest {
+        private int id;
+        private String username;
+        private int resume_index;
+        private long resume_mills;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public int getresume_index() {
+            return resume_index;
+        }
+
+        public void setresume_index(int resume_index) {
+            this.resume_index = resume_index;
+        }
+
+        public long getresume_mills() {
+            return resume_mills;
+        }
+
+        public void setresume_mills(long resume_mills) {
+            this.resume_mills = resume_mills;
         }
     }
 }

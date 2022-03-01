@@ -38,6 +38,7 @@ public class PlayQueueInfo {
     private final float gain;
     private int startPlayerAt = -1;
     private long startPlayerAtPosition; // millis
+    private int playlistId = -1;
 
     public PlayQueueInfo(List<MediaFileEntry> entries, Status playStatus, RepeatStatus repeatStatus,
             boolean shuffleRadioEnabled, boolean internetRadioEnabled, float gain) {
@@ -79,6 +80,15 @@ public class PlayQueueInfo {
 
     public PlayQueueInfo setStartPlayerAt(int startPlayerAt) {
         this.startPlayerAt = startPlayerAt;
+        return this;
+    }
+
+    public int getPlaylistId() {
+        return playlistId;
+    }
+
+    public PlayQueueInfo setPlaylistId(int playlistId) {
+        this.playlistId = playlistId;
         return this;
     }
 

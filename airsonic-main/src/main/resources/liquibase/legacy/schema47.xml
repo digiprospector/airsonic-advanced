@@ -457,4 +457,33 @@
             <dropTable tableName="bookmark" />
         </rollback>
     </changeSet>
+    <changeSet id="schema47_014" author="muff1nman">
+        <validCheckSum>ANY</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="playlist_resume" />
+            </not>
+        </preConditions>
+        <createTable tableName="playlist_resume">
+            <column name="id" type="int" autoIncrement="true" >
+                <constraints primaryKey="true" />
+            </column>
+            <column name="playlist_id" type="int" >
+                <constraints nullable="false" foreignKeyName="pu_p_fk" referencedTableName="playlist" referencedColumnNames="id" deleteCascade="true" />
+            </column>
+            <column name="username" type="${varchar_type}" >
+                <constraints nullable="false" foreignKeyName="pu_u_fk" referencedTableName="user" referencedColumnNames="username" deleteCascade="true" />
+            </column>
+            <column name="resume_index" type="int" >
+                <constraints nullable="false" />
+            </column>
+            <column name="resume_mills" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="playlist_resume" columnNames="playlist_id,username" />
+        <rollback>
+            <dropTable tableName="playlist_resume" />
+        </rollback>
+    </changeSet>
 </databaseChangeLog>

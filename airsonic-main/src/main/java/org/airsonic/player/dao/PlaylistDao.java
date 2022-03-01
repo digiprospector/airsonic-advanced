@@ -101,6 +101,17 @@ public class PlaylistDao extends AbstractDao {
                 files.stream().map(x -> new Object[] { id, x.getId() }).collect(Collectors.toList()));
     }
 
+    public void setPlaylistResume(int playlist_id, String username, int index, long mills) {
+        int n = update("update playlist_resume set resume_index=?, resume_mills=? where playlist_id=? and username=?", index, mills, playlist_id, username);
+        if (n == 0) {
+            update("insert into playlist_resume(playlist_id, username, resume_index, resume_mills) values (?, ?, ?, ?)", playlist_id, username, index, mills);
+        }
+    }
+
+    public Pair<Integer, Long> getPlaylistResume(int playlist_id, String username) {
+        return queryOne("select resume_index, resume_mills from playlist_resume where playlist_id=? and username=?", (rs, i) -> Pair.of(rs.getInt(1), rs.getLong(2)), playlist_id, username);
+    }
+
     public Pair<Integer, Double> getPlaylistFileStats(int id) {
         return queryOne("select count(*), sum(duration) from media_file m, playlist_file p where p.media_file_id = m.id and p.playlist_id=?", (rs, i) -> Pair.of(rs.getInt(1), rs.getDouble(2)), id);
     }

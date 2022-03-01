@@ -17,6 +17,7 @@ import org.airsonic.player.domain.PodcastEpisode;
 import org.airsonic.player.domain.PodcastStatus;
 import org.airsonic.player.domain.RandomSearchCriteria;
 import org.airsonic.player.domain.SavedPlayQueue;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
@@ -211,7 +212,7 @@ public class PlayQueueService {
 
         // Remove non-present files
         files.removeIf(file -> !file.isPresent());
-        doPlay(player, files, null, sessionId);
+        doPlay(player, files, null, sessionId, id);
     }
 
     /**
@@ -325,6 +326,17 @@ public class PlayQueueService {
         List<MediaFile> similarSongs = lastFmService.getSimilarSongs(artist, count, musicFolders);
 
         doPlay(player, similarSongs, null, sessionId);
+    }
+
+    private void doPlay(Player player, List<MediaFile> files, InternetRadio radio, String sessionId,
+        int playlist_id) {
+        if (player.isWeb()) {
+            mediaFileService.removeVideoFiles(files);
+        }
+        player.getPlayQueue().addFiles(false, files);
+        player.getPlayQueue().setRandomSearchCriteria(null);
+        player.getPlayQueue().setInternetRadio(radio);
+        broadcastPlayQueue(player, startAt0, sessionId, playlist_id);
     }
 
     private void doPlay(Player player, List<MediaFile> files, InternetRadio radio, String sessionId) {
@@ -475,6 +487,21 @@ public class PlayQueueService {
 
     private void broadcastPlayQueue(Player player) {
         broadcastPlayQueue(player, identity, null);
+    }
+
+    private void broadcastPlayQueue(Player player, Function<PlayQueueInfo, PlayQueueInfo> playQueueModifier, String triggeringSessionId, int playlist_id) {
+        runAsync(() -> {
+            PlayQueueInfo info = playQueueModifier.apply(getPlayQueueInfo(player));
+            info.setPlaylistId(playlist_id);
+            Pair<Integer, Long> resume = this.playlistService.getPlaylistResume(playlist_id, player.getUsername());
+            if (resume != null) {
+                info.setStartPlayerAt(resume.getLeft());
+                info.setStartPlayerAtPosition(resume.getRight());
+            }
+            brokerTemplate.convertAndSendToUser(player.getUsername(),
+                    "/queue/playqueues/" + player.getId() + "/updated", info);
+            postBroadcast(info, player, triggeringSessionId);
+        });
     }
 
     private void broadcastPlayQueue(Player player, Function<PlayQueueInfo, PlayQueueInfo> playQueueModifier, String triggeringSessionId) {
